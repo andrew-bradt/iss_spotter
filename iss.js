@@ -46,8 +46,6 @@ const fetchISSFlyOverTimes = (coords, callback) => {
   });
 };
 
-const formatFlyOverTime = (risetime, duration) => `Next pass at ${new Date(risetime)} for ${duration} seconds!`;
-
 const nextISSTimesForMyLocation = (callback) => {
   fetchMyIP((error, ip)=>{
     if (error) {
@@ -61,8 +59,7 @@ const nextISSTimesForMyLocation = (callback) => {
         if (error) {
           return callback(error, null);
         }
-        const formattedTimes = flyOverTimes.map(({risetime, duration}) => formatFlyOverTime(risetime, duration));
-        callback(null, formattedTimes);
+        callback(null, flyOverTimes);
       });
     });
   });
@@ -72,6 +69,5 @@ module.exports = {
   fetchMyIP,
   fetchCoordsByIP,
   fetchISSFlyOverTimes,
-  formatFlyOverTime,
   nextISSTimesForMyLocation
 };
