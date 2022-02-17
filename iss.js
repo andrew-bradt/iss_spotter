@@ -5,10 +5,13 @@ const fetchMyIP = (callback) => {
   request(url, (e, res, body) => {
     if (e) {
       return callback(e, null);
-    } else {
-      const {ip} = JSON.parse(body);
-      return callback(null, ip);
     }
+    if (res.statusCode !== 200) {
+      const msg = `Status Code ${res.statusCode} when fetching IP.  Response: ${body}`;
+      return callback(Error(msg), null);
+    }
+    const {ip} = JSON.parse(body);
+    return callback(null, ip);
   });
 };
 
