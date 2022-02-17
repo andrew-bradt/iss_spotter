@@ -30,7 +30,25 @@ const fetchCoordsByIP = (ip, callback) => {
   });
 };
 
+const fetchISSFlyOverTimes = (coords, callback) => {
+  const {latitude, longitude} = coords;
+  const url = `https://iss-pass.herokuapp.com/json/?lat=${latitude}&lon=${longitude}`;
+  request(url, (e, res, body)=>{
+    if (e) {
+      return callback(e, null);
+    }
+    if (res.statusCode !== 200) {
+      const msg = `Status Code ${res.statusCode} when fetching ISS Fly Over Times.  Response ${body}`;
+      return callback(Error(msg), null);
+    }
+    const {response: flyOverTimes} = JSON.parse(body);
+    console.log(JSON.parse(body).request);
+    return callback(null, flyOverTimes);
+  });
+};
+
 module.exports = {
   fetchMyIP,
-  fetchCoordsByIP
+  fetchCoordsByIP,
+  fetchISSFlyOverTimes
 };
