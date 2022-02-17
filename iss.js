@@ -15,6 +15,22 @@ const fetchMyIP = (callback) => {
   });
 };
 
+const fetchCoordsByIP = (ip, callback) => {
+  const url = `https://freegeoip.app/json/${ip}`;
+  request(url, (e, res, body) => {
+    if (e) {
+      return callback(e, null);
+    }
+    if (res.statusCode !== 200) {
+      const msg = `Status Code ${res.statusCode} when fetching coordinates.  Response: ${body}`;
+      return callback(Error(msg), null);
+    }
+    const {latitude, longitude} = JSON.parse(body);
+    return callback(null, {latitude, longitude});
+  });
+};
+
 module.exports = {
-  fetchMyIP
+  fetchMyIP,
+  fetchCoordsByIP
 };
