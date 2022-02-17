@@ -42,13 +42,36 @@ const fetchISSFlyOverTimes = (coords, callback) => {
       return callback(Error(msg), null);
     }
     const {response: flyOverTimes} = JSON.parse(body);
-    console.log(JSON.parse(body).request);
     return callback(null, flyOverTimes);
+  });
+};
+
+const formatFlyOverTime = (risetime, duration) => `Next pass at ${new Date(risetime)} for ${duration} seconds!`;
+
+const nextISSTimesForMyLocation = (callback) => {
+  fetchMyIP((error, ip)=>{
+    if (error) {
+      return console.log("It didn't work! Error fetching ip: ", error);
+    }
+    fetchCoordsByIP(ip, (error, coords)=>{
+      if (error) {
+        return console.log("It didn't work! Error fetching coordinates: ", error);
+      }
+      fetchISSFlyOverTimes(coords, (error, flyOverTimes) => {
+        if (error) {
+          return callback(error, null);
+        }
+        const formattedTimes = flyOverTimes.map(({risetime, duration}) => formatFlyOverTime(risetime, duration));
+        callback(null, formattedTimes);
+      });
+    });
   });
 };
 
 module.exports = {
   fetchMyIP,
   fetchCoordsByIP,
-  fetchISSFlyOverTimes
+  fetchISSFlyOverTimes,
+  formatFlyOverTime,
+  nextISSTimesForMyLocation
 };
